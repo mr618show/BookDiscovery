@@ -17,7 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString* author;
 @property (nonatomic, strong) NSString* summary;
 @property (nonatomic, strong) UIImage* thumbnailImage;
-
+@property (nonatomic, strong) NSString* imageSmallURL;
+@property (nonatomic, strong) NSString* imageLargeURL;
+@property (nonatomic, strong) NSString* storeURL;
+@property (nonatomic, strong) NSString* currency;
+@property (nonatomic, strong) NSNumber* price;
 @end
 
 NS_ASSUME_NONNULL_END

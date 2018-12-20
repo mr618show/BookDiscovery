@@ -16,6 +16,8 @@
 		A5609B5D21CB79E100B4848B /* SearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A5609B5C21CB79E100B4848B /* SearchResult.m */; };
 		A5609B6121CB807700B4848B /* SearchResultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5609B5F21CB807700B4848B /* SearchResultCell.m */; };
 		A5609B6221CB807700B4848B /* SearchResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5609B6021CB807700B4848B /* SearchResultCell.xib */; };
+		A5609B6921CC158000B4848B /* NotFoundCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5609B6721CC158000B4848B /* NotFoundCell.m */; };
+		A5609B6A21CC158000B4848B /* NotFoundCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5609B6821CC158000B4848B /* NotFoundCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,9 @@
 		A5609B5E21CB807700B4848B /* SearchResultCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultCell.h; sourceTree = "<group>"; };
 		A5609B5F21CB807700B4848B /* SearchResultCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultCell.m; sourceTree = "<group>"; };
 		A5609B6021CB807700B4848B /* SearchResultCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchResultCell.xib; sourceTree = "<group>"; };
+		A5609B6621CC158000B4848B /* NotFoundCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotFoundCell.h; sourceTree = "<group>"; };
+		A5609B6721CC158000B4848B /* NotFoundCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotFoundCell.m; sourceTree = "<group>"; };
+		A5609B6821CC158000B4848B /* NotFoundCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotFoundCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +71,7 @@
 		A5609B4421CB6C7800B4848B /* BookDiscovery */ = {
 			isa = PBXGroup;
 			children = (
+				A5609B6B21CC42F800B4848B /* Helper */,
 				A5609B6521CB840100B4848B /* Controller */,
 				A5609B6421CB83CC00B4848B /* View */,
 				A5609B6321CB83BF00B4848B /* Model */,
@@ -95,6 +101,9 @@
 				A5609B5E21CB807700B4848B /* SearchResultCell.h */,
 				A5609B5F21CB807700B4848B /* SearchResultCell.m */,
 				A5609B6021CB807700B4848B /* SearchResultCell.xib */,
+				A5609B6621CC158000B4848B /* NotFoundCell.h */,
+				A5609B6721CC158000B4848B /* NotFoundCell.m */,
+				A5609B6821CC158000B4848B /* NotFoundCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -106,6 +115,13 @@
 				A5609B4921CB6C7800B4848B /* SearchViewController.m */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		A5609B6B21CC42F800B4848B /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,6 +181,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5609B6A21CC158000B4848B /* NotFoundCell.xib in Resources */,
 				A5609B5221CB6C7C00B4848B /* LaunchScreen.storyboard in Resources */,
 				A5609B4F21CB6C7C00B4848B /* Assets.xcassets in Resources */,
 				A5609B6221CB807700B4848B /* SearchResultCell.xib in Resources */,
@@ -181,6 +198,7 @@
 			files = (
 				A5609B5D21CB79E100B4848B /* SearchResult.m in Sources */,
 				A5609B4A21CB6C7800B4848B /* SearchViewController.m in Sources */,
+				A5609B6921CC158000B4848B /* NotFoundCell.m in Sources */,
 				A5609B6121CB807700B4848B /* SearchResultCell.m in Sources */,
 				A5609B5521CB6C7C00B4848B /* main.m in Sources */,
 				A5609B4721CB6C7800B4848B /* AppDelegate.m in Sources */,
