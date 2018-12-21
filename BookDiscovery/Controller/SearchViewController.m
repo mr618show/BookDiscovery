@@ -10,6 +10,7 @@
 #import "SearchResult.h"
 #import "SearchResultCell.h"
 #import "NotFoundCell.h"
+#import "DetailViewController.h"
 
 @interface SearchViewController () <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) NSMutableArray<SearchResult *> * searchResults;
@@ -32,10 +33,19 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+    self.hasSearched = NO;
     [self configureTableView:self.tableView];
-    self.tableView.estimatedRowHeight = 80;
+    [self customizeAppearance];
+//    if ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0){
+//        self.tableView.contentInset = UIEdgeInsetsMake(-15, 0, 0, 0);
+//    }
+    self.tableView.estimatedRowHeight = 44;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
+    [self.tableView setNeedsLayout];
+    [self.tableView layoutIfNeeded];
+    [self.tableView reloadData];
 }
+
 #pragma Networking Methods
 
 - (NSURL*)iTunesURL: (NSString *) searchText {
@@ -46,56 +56,57 @@
     return url;
 }
 
-//- (NSString *) performStoreRequestFrom: (NSURL *) url {
-//    
-//    NSURLSessionDownloadTask *task = [[NSURLSession sharedSession] downloadTaskWithURL:url completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-//        return [[NSString alloc] initWithData: location encoding:NSUTF8StringEncoding];
-//    }];
-//    [task resume];
-//}
-
 #pragma  - SearchBar Delegate
+- (void)performSearchFrom:(NSURL *)url {
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            [self showAlert];
+            return;
+        }
+        
+        if ([response isKindOfClass: [NSHTTPURLResponse class]]) {
+            NSInteger statusCode = [(NSHTTPURLResponse *) response statusCode];
+            if (statusCode != 200) {
+                [self showAlert];
+                return;
+            }
+        }
+        NSString *jsonString = [[NSString alloc] initWithData: data encoding:NSUTF8StringEncoding];
+        NSData *objectData = [jsonString dataUsingEncoding: NSUTF8StringEncoding];
+        NSError *jsonError;
+        NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                       options:NSJSONReadingMutableContainers
+                                                                         error: &jsonError];
+        [self parse: jsonDictionary];
+        [self.tableView reloadData];
+    }];
+    [task resume];
+}
+
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     if (searchBar.text != nil) {
         [searchBar resignFirstResponder];
         self.hasSearched = YES;
         NSURL *url = [self iTunesURL:self.searchBar.text];
-        
-        NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            if (error) {
-                [self showAlert];
-                return;
-            }
-            
-            if ([response isKindOfClass: [NSHTTPURLResponse class]]) {
-                NSInteger statusCode = [(NSHTTPURLResponse *) response statusCode];
-                if (statusCode != 200) {
-                    [self showAlert];
-                    return;
-                }
-            }
-            NSString *jsonString = [[NSString alloc] initWithData: data encoding:NSUTF8StringEncoding];
-            NSData *objectData = [jsonString dataUsingEncoding: NSUTF8StringEncoding];
-            NSError *jsonError;
-            NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:objectData
-                                                                           options:NSJSONReadingMutableContainers
-                                                                             error: &jsonError];
-            [self parse: jsonDictionary];
-            NSLog(@"jsonDict: %@", jsonDictionary);
-        }];
-        [task resume];
-        
-        [self.tableView reloadData];
+        [self performSearchFrom:url];
     }
+}
 
-
+- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
+    return UIBarPositionTop;
 }
 
 #pragma  - TableView DataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.searchResults.count;
+    if (self.hasSearched == NO) {
+        return 0;
+    } else if (self.searchResults.count == 0) {
+        return 1;
+    } else {
+      return self.searchResults.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -108,7 +119,36 @@
         SearchResult * searchResult = _searchResults[indexPath.row];
         cell.titleLabel.text = searchResult.title;
         cell.authorLabel.text = searchResult.author;
+        NSData * imageData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: searchResult.imageSmallURL]];
+        cell.thumbnailImage.image = [UIImage imageWithData: imageData];
         return cell;
+    }
+}
+
+#pragma mark- tableView Delegates
+
+//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+//
+//    return UITableViewAutomaticDimension;
+//}
+//
+//-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+//
+//    return UITableViewAutomaticDimension;
+//}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    DetailViewController *detailViewController = (DetailViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"DetailViewController"];
+    detailViewController.currentSearchResult = self.searchResults[indexPath.row];
+    [self.navigationController pushViewController:detailViewController animated:YES];
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.searchResults.count == 0){
+        return nil;
+    } else {
+        return indexPath;
     }
 }
 
@@ -126,13 +166,57 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
--(void) parse: (NSDictionary *) dictionary {
+-(NSMutableArray <SearchResult *> *) parse: (NSDictionary *) dictionary {
     NSArray * array = dictionary[@"results"];
+    self.searchResults = NSMutableArray.new;
     for (NSDictionary * resultDict in array) {
-        NSString * wrapperType = resultDict[@"wrapperType"];
-        NSString * kind = resultDict[@"kind"];
-        NSLog(@"wrapperType: %@, kind: %@", wrapperType, kind);
+        if ([resultDict[@"wrapperType"] isEqualToString: @"audiobook"]){
+            SearchResult * newResult = [self parseAudioBook:resultDict];
+            [self.searchResults addObject:newResult];
+        }
+        if ([resultDict[@"wrapperType"] isEqualToString: @"track"] && [resultDict[@"kind"] isEqualToString:@"ebook"]){
+            SearchResult * newResult = [self parseEBook:resultDict];
+            [self.searchResults addObject:newResult];
+        }
     }
+    return self.searchResults;
+}
+
+-(SearchResult *)parseAudioBook: (NSDictionary *) dictionary {
+    SearchResult *searchResult = SearchResult.new;
+    searchResult.title = dictionary[@"collectionName"];
+    searchResult.author = dictionary[@"artistName"];
+    searchResult.imageSmallURL = dictionary[@"artworkUrl60"];
+    searchResult.imageLargeURL = dictionary[@"artworkUrl100"];
+    searchResult.storeURL = dictionary[@"collectionViewUrl"];
+    searchResult.price = dictionary[@"collectionPrice"];
+    searchResult.currency = dictionary[@"currency"];
+    searchResult.summary = dictionary[@"description"];
+    return searchResult;
+}
+
+-(SearchResult *)parseEBook: (NSDictionary *) dictionary {
+    SearchResult *searchResult = SearchResult.new;
+    searchResult.title = dictionary[@"trackName"];
+    searchResult.author = dictionary[@"artistName"];
+    searchResult.imageSmallURL = dictionary[@"artworkUrl60"];
+    searchResult.imageLargeURL = dictionary[@"artworkUrl100"];
+    searchResult.storeURL = dictionary[@"trackViewUrl"];
+    searchResult.price = dictionary[@"price"];
+    searchResult.currency = dictionary[@"currency"];
+    return searchResult;
+}
+
+-(void) customizeAppearance {
+    UIColor *barTintColor = [UIColor colorWithRed:20/255 green:160/255 blue:160/255 alpha:1];
+    [self.searchBar setTintColor:barTintColor];
+    //window!.tintColor = [UIColor colorWithRed:10/255 green:80/255 blue:80/255 alpha:1];
+    
+    [self.navigationController.navigationBar setBarTintColor:barTintColor];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [self.searchBar setTintColor: UIColor.whiteColor];
+    [self.searchBar setPlaceholder: @"Search for a book"];
+    self.navigationItem.titleView = self.searchBar;
 }
 
 @end

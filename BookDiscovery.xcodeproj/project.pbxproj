@@ -18,6 +18,7 @@
 		A5609B6221CB807700B4848B /* SearchResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5609B6021CB807700B4848B /* SearchResultCell.xib */; };
 		A5609B6921CC158000B4848B /* NotFoundCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A5609B6721CC158000B4848B /* NotFoundCell.m */; };
 		A5609B6A21CC158000B4848B /* NotFoundCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5609B6821CC158000B4848B /* NotFoundCell.xib */; };
+		A5609B6E21CC6BA100B4848B /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5609B6D21CC6BA100B4848B /* DetailViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		A5609B6621CC158000B4848B /* NotFoundCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotFoundCell.h; sourceTree = "<group>"; };
 		A5609B6721CC158000B4848B /* NotFoundCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotFoundCell.m; sourceTree = "<group>"; };
 		A5609B6821CC158000B4848B /* NotFoundCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotFoundCell.xib; sourceTree = "<group>"; };
+		A5609B6C21CC6BA100B4848B /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		A5609B6D21CC6BA100B4848B /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +116,8 @@
 			children = (
 				A5609B4821CB6C7800B4848B /* SearchViewController.h */,
 				A5609B4921CB6C7800B4848B /* SearchViewController.m */,
+				A5609B6C21CC6BA100B4848B /* DetailViewController.h */,
+				A5609B6D21CC6BA100B4848B /* DetailViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -202,6 +207,7 @@
 				A5609B6121CB807700B4848B /* SearchResultCell.m in Sources */,
 				A5609B5521CB6C7C00B4848B /* main.m in Sources */,
 				A5609B4721CB6C7800B4848B /* AppDelegate.m in Sources */,
+				A5609B6E21CC6BA100B4848B /* DetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
