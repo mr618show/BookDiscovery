@@ -15,7 +15,7 @@ Detail View
 
 Walkthrough of all user stories:
 
-![Video Walkthrough](BookDicovery.gif)
+![Video Walkthrough](https://github.com/mr618show/BookDiscovery/blob/master/BookDiscovery.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 Copyright 2018 RuiMao
