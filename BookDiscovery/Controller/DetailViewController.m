@@ -28,28 +28,15 @@
     self.summaryContainerView.layer.masksToBounds = YES;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 #pragma private method
 
 -(UIImage *) downloadImageFromURL :(NSString *)imageUrl{
-    
     NSURL  *url = [NSURL URLWithString:imageUrl];
     NSData *urlData = [NSData dataWithContentsOfURL:url];
     if (urlData){
-        NSLog(@"Downloading started...");
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *filePath = [NSString stringWithFormat:@"%@/%@", documentsDirectory,@"dwnld_image.png"];
-        NSLog(@"FILE : %@",filePath);
+        NSString *filePath = [NSString stringWithFormat:@"%@/%@", documentsDirectory,@"download_image.png"];
         [urlData writeToFile:filePath atomically:YES];
         return [UIImage imageWithContentsOfFile:filePath];
     }

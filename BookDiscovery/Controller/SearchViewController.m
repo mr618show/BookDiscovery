@@ -14,6 +14,7 @@
 
 @interface SearchViewController () <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) NSMutableArray<SearchResult *> * searchResults;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (assign, nonatomic) BOOL hasSearched;
 @end
 
@@ -32,13 +33,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
     self.hasSearched = NO;
     [self configureTableView:self.tableView];
     [self customizeAppearance];
-//    if ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0){
-//        self.tableView.contentInset = UIEdgeInsetsMake(-15, 0, 0, 0);
-//    }
+    
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.frame = CGRectMake(0, 0, 24, 24);
+    spinner.center = self.view.center;
+    spinner.hidesWhenStopped = YES;
+    [self.view addSubview:spinner];
+    self.activityIndicator = spinner;
+    
     self.tableView.estimatedRowHeight = 44;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     [self.tableView setNeedsLayout];
@@ -73,6 +78,7 @@
                 return;
             }
         }
+        
         NSString *jsonString = [[NSString alloc] initWithData: data encoding:NSUTF8StringEncoding];
         NSData *objectData = [jsonString dataUsingEncoding: NSUTF8StringEncoding];
         NSError *jsonError;
@@ -80,7 +86,11 @@
                                                                        options:NSJSONReadingMutableContainers
                                                                          error: &jsonError];
         [self parse: jsonDictionary];
-        [self.tableView reloadData];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // Update the UI on the main thread
+            [self.activityIndicator stopAnimating];
+            [self.tableView reloadData];
+        });
     }];
     [task resume];
 }
@@ -88,6 +98,7 @@
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     if (searchBar.text != nil) {
         [searchBar resignFirstResponder];
+        [self.activityIndicator startAnimating];
         self.hasSearched = YES;
         NSURL *url = [self iTunesURL:self.searchBar.text];
         [self performSearchFrom:url];
@@ -126,17 +137,6 @@
 }
 
 #pragma mark- tableView Delegates
-
-//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
-//
-//    return UITableViewAutomaticDimension;
-//}
-//
-//-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-//
-//    return UITableViewAutomaticDimension;
-//}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     DetailViewController *detailViewController = (DetailViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"DetailViewController"];
@@ -209,13 +209,10 @@
 
 -(void) customizeAppearance {
     UIColor *barTintColor = [UIColor colorWithRed:20/255 green:160/255 blue:160/255 alpha:1];
-    [self.searchBar setTintColor:barTintColor];
-    //window!.tintColor = [UIColor colorWithRed:10/255 green:80/255 blue:80/255 alpha:1];
-    
     [self.navigationController.navigationBar setBarTintColor:barTintColor];
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     [self.searchBar setTintColor: UIColor.whiteColor];
-    [self.searchBar setPlaceholder: @"Search for a book"];
+    [self.searchBar setPlaceholder: @"Book name, author or keyword"];
     self.navigationItem.titleView = self.searchBar;
 }
 
