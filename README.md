@@ -6,6 +6,8 @@ Completed user stories:
 Search View
  - Users can search a book based on its name, author or keywords
  - The tableView lists the search results based on the search text using the result returned from the API, it gives basic information of each search result
+ - It uses a sigle cell showing result not found when there is no data returned
+ - It shows an alert when there is no internet connection or if there is error returned from the API call
  - It shows an activity indicator when tableView is loading data
  
 Detail View
